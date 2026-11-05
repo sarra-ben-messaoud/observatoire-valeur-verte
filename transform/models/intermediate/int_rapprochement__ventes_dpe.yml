@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: int_rapprochement__ventes_dpe
+    description: Rapprochement d'une vente DVF avec le DPE du même logement (une ligne par vente rapprochée).
+    columns:
+      - name: id_vente
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_dvf__ventes_logement')
+                field: id_vente
+      - name: numero_dpe
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_dpe__logements')
+                field: numero_dpe
+      - name: methode
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['cle_ban', 'adresse_normalisee']
+      - name: ecart_surface
+        description: Écart relatif de surface entre la vente et le DPE (0,10 maximum).
+      - name: anciennete_dpe_jours
+        description: Nombre de jours entre l'établissement du DPE et la vente (toujours positif ou nul).
+      - name: etiquette_ambigue
+        description: Un autre DPE presque aussi proche en surface porte une étiquette différente.
+      - name: dpe_partage
+        description: Le même DPE a été retenu pour plusieurs ventes.
+      - name: est_fiable
+        description: Rapprochement sans ambiguïté d'étiquette ni DPE partagé ; seuls ces cas servent à l'analyse.

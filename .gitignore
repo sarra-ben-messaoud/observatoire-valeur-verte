@@ -1,0 +1,18 @@
+# Données (téléchargées et reconstruites par le pipeline, jamais versionnées)
+data/
+*.duckdb
+*.duckdb.wal
+
+# Environnement Python
+.venv/
+__pycache__/
+.pytest_cache/
+
+# Secrets éventuels
+.env
+
+# dbt (fichiers générés)
+transform/target/
+transform/logs/
+transform/dbt_packages/
+transform/.user.yml

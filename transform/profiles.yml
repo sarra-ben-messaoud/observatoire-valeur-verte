@@ -1,0 +1,8 @@
+# Connexion dbt -> DuckDB. La base est un simple fichier dans data/ (non versionné).
+observatoire:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../data/observatoire.duckdb') }}"
+      threads: 4

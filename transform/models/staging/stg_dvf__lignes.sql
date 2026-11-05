@@ -1,0 +1,26 @@
+-- Lignes DVF typées. Aucune ligne n'est filtrée ici : le filtrage métier se fait en silver.
+select
+    id_mutation,
+    try_cast(date_mutation as date)                  as date_mutation,
+    nature_mutation,
+    try_cast(valeur_fonciere as double)              as valeur_fonciere,
+    adresse_numero,
+    adresse_suffixe,
+    adresse_nom_voie,
+    adresse_code_voie,
+    code_postal,
+    code_commune,
+    nom_commune,
+    code_departement,
+    id_parcelle,
+    lot1_numero,
+    try_cast(lot1_surface_carrez as double)          as lot1_surface_carrez,
+    try_cast(nombre_lots as integer)                 as nombre_lots,
+    type_local,
+    try_cast(surface_reelle_bati as integer)         as surface_reelle_bati,
+    try_cast(nombre_pieces_principales as integer)   as nombre_pieces_principales,
+    try_cast(surface_terrain as integer)             as surface_terrain,
+    try_cast(longitude as double)                    as longitude,
+    try_cast(latitude as double)                     as latitude,
+    cast(annee as integer)                           as annee_fichier
+from {{ source('bronze', 'dvf') }}

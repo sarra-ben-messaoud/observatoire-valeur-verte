@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: "Données brutes ingérées par les scripts de ingestion/, au format Parquet (toutes colonnes en texte)."
+    tables:
+      - name: dvf
+        description: "Lignes DVF géolocalisées (une vente peut occuper plusieurs lignes : logement, dépendances, parcelles)."
+        meta:
+          external_location: "read_parquet('../data/bronze/dvf/*/*.parquet', hive_partitioning = true)"
+      - name: dpe
+        description: DPE logements existants (ADEME), un fichier part-… par passage d'ingestion.
+        meta:
+          external_location: "read_parquet('../data/bronze/dpe/*/*.parquet', hive_partitioning = true)"

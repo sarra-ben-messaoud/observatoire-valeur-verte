@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: int_dpe__logements
+    description: DPE de logements (appartements, maisons) utilisables pour le rapprochement, version la plus récente.
+    columns:
+      - name: numero_dpe
+        data_tests: [unique, not_null]
+      - name: etiquette_dpe
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+      - name: type_logement
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Appartement', 'Maison']

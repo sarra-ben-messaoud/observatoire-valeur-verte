@@ -1,0 +1,19 @@
+name: observatoire
+version: "1.0.0"
+profile: observatoire
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+models:
+  observatoire:
+    staging:
+      +materialized: view        # typage léger des données bronze, recalculé à la volée
+      +schema: staging
+    intermediate:
+      +materialized: table       # silver : données nettoyées et rapprochées
+      +schema: silver
+    marts:
+      +materialized: table       # gold : modèle en étoile pour Power BI et l'analyse
+      +schema: gold

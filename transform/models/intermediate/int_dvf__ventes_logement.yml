@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: int_dvf__ventes_logement
+    description: Ventes d'un seul logement (appartement ou maison), une ligne par vente, adresse normalisée.
+    columns:
+      - name: id_vente
+        data_tests: [unique, not_null]
+      - name: date_vente
+        data_tests: [not_null]
+      - name: prix
+        data_tests: [not_null]
+      - name: surface
+        data_tests: [not_null]
+      - name: type_logement
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Appartement', 'Maison']
+      - name: code_commune
+        data_tests: [not_null]
