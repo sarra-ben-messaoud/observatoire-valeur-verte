@@ -56,7 +56,10 @@ candidats as (
 
 classes as (
     select *,
-        row_number() over (partition by id_vente order by priorite, ecart_surface, anciennete_dpe_jours) as rang,
+        -- départage final sur le numéro de DPE : sans lui, deux candidats à égalité parfaite
+        -- (fréquent avec les DPE générés pour tout un immeuble) seraient choisis au hasard,
+        -- et le résultat changerait d'une exécution à l'autre
+        row_number() over (partition by id_vente order by priorite, ecart_surface, anciennete_dpe_jours, numero_dpe) as rang,
         count(*) over (partition by id_vente) as nb_candidats
     from candidats
 ),

@@ -31,7 +31,7 @@ orchestration avec Airflow, dashboard Power BI et analyse statistique.
 | Ventes d'un seul logement (hors neuf) | 85 431 |
 | DPE de logements ingérés | 517 849 |
 | Ventes rapprochées d'un DPE | 53 109 (62 %) |
-| dont rapprochements fiables (utilisés pour l'analyse) | 30 491 |
+| dont ventes analysées (rapprochement fiable, prix plausible) | 30 217 |
 
 **Le rapprochement en cascade** — DVF et les DPE n'ont aucun identifiant commun :
 1. **Clé d'adresse exacte** (97 % des rapprochements) : l'identifiant BAN des DPE (`69266_2275_00006`) est reconstruit
@@ -41,6 +41,9 @@ orchestration avec Airflow, dashboard Power BI et analyse statistique.
 3. **Contrôles** : même type de logement, surface à ±10 %, DPE établi avant la vente (3 ans maximum).
 4. **Fiabilité** : on écarte de l'analyse les cas où plusieurs DPE d'étiquettes différentes sont possibles,
    et ceux où un même DPE est retenu pour plusieurs ventes.
+5. **Déterminisme** : en cas d'égalité parfaite entre deux DPE candidats, le départage se fait sur le numéro
+   de DPE. Sans cette règle, le résultat variait de quelques dizaines de ventes d'une exécution à l'autre
+   (problème détecté en comparant le dashboard aux chiffres de référence).
 
 Le taux de rapprochement progresse de 57 % (2022) à 82 % (2025) pour les appartements, à mesure que
 la base des DPE « nouvelle méthode » (depuis juillet 2021) se remplit.

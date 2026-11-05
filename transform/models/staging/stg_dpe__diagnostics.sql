@@ -30,5 +30,5 @@ select
 from {{ source('bronze', 'dpe') }}
 qualify row_number() over (
     partition by numero_dpe
-    order by try_cast(date_derniere_modification_dpe as date) desc nulls last, _ingere_le desc
+    order by try_cast(date_derniere_modification_dpe as date) desc nulls last, _ingere_le desc, date_etablissement_dpe desc
 ) = 1

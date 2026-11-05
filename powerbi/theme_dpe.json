@@ -1,0 +1,16 @@
+{
+  "name": "Observatoire valeur verte (couleurs DPE)",
+  "dataColors": ["#009036", "#55AB26", "#C8D200", "#FFED00", "#FBBA00", "#EB6909", "#E2001A", "#3B6FB6", "#6B7280", "#1F2933"],
+  "background": "#FFFFFF",
+  "foreground": "#1F2933",
+  "tableAccent": "#009036",
+  "good": "#009036",
+  "neutral": "#FBBA00",
+  "bad": "#E2001A",
+  "textClasses": {
+    "title": { "fontFace": "Segoe UI Semibold", "fontSize": 13, "color": "#1F2933" },
+    "header": { "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": "#1F2933" },
+    "label": { "fontFace": "Segoe UI", "fontSize": 10, "color": "#6B7280" },
+    "callout": { "fontFace": "Segoe UI Semibold", "fontSize": 26, "color": "#1F2933" }
+  }
+}

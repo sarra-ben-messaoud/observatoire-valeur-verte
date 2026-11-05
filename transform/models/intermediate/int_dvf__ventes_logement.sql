@@ -25,7 +25,7 @@ composition as (
 
 logement as (
     select *,
-        row_number() over (partition by id_mutation order by surface_reelle_bati desc nulls last) as rang
+        row_number() over (partition by id_mutation order by surface_reelle_bati desc nulls last, id_parcelle, lot1_numero, adresse_numero) as rang  -- départage déterministe
     from lignes
     where type_local in ('Appartement', 'Maison')
 )
