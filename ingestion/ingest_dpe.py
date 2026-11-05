@@ -140,6 +140,7 @@ def ingest_departement(session, dataset_id: str, dep: str, out_dir: Path, full: 
 
 
 def main():
+    config.preparer_dossiers()
     parser = argparse.ArgumentParser()
     parser.add_argument("--full", action="store_true", help="Rechargement complet au lieu de l'incrémental")
     args = parser.parse_args()

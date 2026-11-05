@@ -5,6 +5,13 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 DATA_DIR = ROOT / "data"
 BRONZE_DIR = DATA_DIR / "bronze"
+GOLD_DIR = DATA_DIR / "gold"      # fichiers Parquet écrits par dbt (couche gold), lus par Power BI
+
+
+def preparer_dossiers() -> None:
+    """Crée l'arborescence data/ attendue par le pipeline (dbt ne crée pas les dossiers lui-même)."""
+    for d in (BRONZE_DIR, GOLD_DIR):
+        d.mkdir(parents=True, exist_ok=True)
 
 # Périmètre de la version 1
 DEPARTEMENTS = ["69"]                 # Rhône ; on élargira à l'étape 8

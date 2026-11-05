@@ -64,6 +64,7 @@ def ingest_year(con, annee: int, dep: str, out_dir: Path, sources: list[str] | N
 
 
 def main():
+    config.preparer_dossiers()
     parser = argparse.ArgumentParser()
     parser.add_argument("--force", action="store_true", help="Réingérer même si le fichier existe")
     args = parser.parse_args()

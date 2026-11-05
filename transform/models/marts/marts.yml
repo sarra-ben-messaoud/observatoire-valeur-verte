@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: fait_ventes
+    description: "Table de faits : une ligne par vente d'un seul logement, avec le DPE rapproché quand il existe."
+    columns:
+      - name: id_vente
+        data_tests: [unique, not_null]
+      - name: date_vente
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_temps'), field: date}
+      - name: code_commune
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_commune'), field: code_commune}
+      - name: etiquette_dpe
+        description: Vide si la vente n'a pas été rapprochée d'un DPE.
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_dpe'), field: etiquette_dpe}
+      - name: inclus_analyse
+        description: Vente plausible et rapprochement fiable ; périmètre des indicateurs de valeur verte.
+
+  - name: dim_dpe
+    description: Classes DPE, seuils de consommation (méthode 2021) et année d'interdiction à la location.
+    columns:
+      - name: etiquette_dpe
+        data_tests: [unique, not_null]
+
+  - name: dim_temps
+    columns:
+      - name: date
+        data_tests: [unique, not_null]
+
+  - name: dim_commune
+    columns:
+      - name: code_commune
+        data_tests: [unique, not_null]
+
+  - name: agg_prix_m2
+    description: Prix au m² médian et quartiles par commune, type, année et classe DPE (cellules d'au moins 10 ventes).
+
+  - name: suivi_rapprochement
+    description: Taux de rapprochement DVF ↔ DPE par commune, année et type de logement.

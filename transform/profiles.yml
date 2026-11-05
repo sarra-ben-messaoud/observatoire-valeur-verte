@@ -6,3 +6,4 @@ observatoire:
       type: duckdb
       path: "{{ env_var('DUCKDB_PATH', '../data/observatoire.duckdb') }}"
       threads: 4
+      external_root: "{{ env_var('GOLD_DIR', '../data/gold') }}"   # dossier des fichiers Parquet de la couche gold

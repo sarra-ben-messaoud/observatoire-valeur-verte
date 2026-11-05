@@ -6,6 +6,9 @@ model-paths: ["models"]
 macro-paths: ["macros"]
 test-paths: ["tests"]
 
+flags:
+  send_anonymous_usage_stats: false   # pas d'envoi de statistiques d'usage à dbt Labs
+
 models:
   observatoire:
     staging:
@@ -15,5 +18,5 @@ models:
       +materialized: table       # silver : données nettoyées et rapprochées
       +schema: silver
     marts:
-      +materialized: table       # gold : modèle en étoile pour Power BI et l'analyse
+      +materialized: external    # gold : modèle en étoile, écrit en Parquet dans data/gold/ (lu par Power BI)
       +schema: gold

@@ -17,7 +17,7 @@ orchestration avec Airflow, dashboard Power BI et analyse statistique.
 | 1. Cadrage | ✅ |
 | 2. Ingestion bronze (DVF, DPE) | ✅ |
 | 3. Silver et rapprochement DVF ↔ DPE | ✅ |
-| 4. Gold et tests de qualité | ⏳ |
+| 4. Gold et tests de qualité | ✅ |
 | 5. Orchestration (Airflow) et CI (GitHub Actions) | ⏳ |
 | 6. Dashboard Power BI | ⏳ |
 | 7. Analyse de la valeur verte | ⏳ |
@@ -45,6 +45,25 @@ orchestration avec Airflow, dashboard Power BI et analyse statistique.
 Le taux de rapprochement progresse de 57 % (2022) à 82 % (2025) pour les appartements, à mesure que
 la base des DPE « nouvelle méthode » (depuis juillet 2021) se remplit.
 
+## Modèle de données (couche gold)
+
+Écrit en Parquet dans `data/gold/`, directement lisible par Power BI.
+
+| Table | Contenu |
+| --- | --- |
+| `fait_ventes` | Une ligne par vente d'un seul logement, avec le DPE rapproché quand il existe |
+| `dim_dpe` | Classes A à G, seuils de consommation, année d'interdiction à la location |
+| `dim_commune` | Communes du Rhône, Lyon découpée en 9 arrondissements |
+| `dim_temps` | Calendrier (année, trimestre, mois) |
+| `agg_prix_m2` | Prix au m² médian et quartiles par commune, type, année et classe DPE (au moins 10 ventes) |
+| `suivi_rapprochement` | Taux de rapprochement par commune, année et type, pour surveiller la qualité |
+
+**Qualité des données : 43 tests dbt** (unicité, valeurs obligatoires, valeurs autorisées, intégrité
+des relations entre tables), dont 3 tests métier :
+- le taux de rapprochement global ne doit pas passer sous 50 % (sinon, une source a changé de format) ;
+- un DPE rapproché est toujours antérieur à la vente ;
+- une vente incluse dans l'analyse a toujours une étiquette DPE et un prix plausible.
+
 ## Lancer le projet
 
 ```bash
@@ -55,7 +74,8 @@ python -m pytest                  # tests
 python -m ingestion.ingest_dvf    # ingestion des ventes (DVF)
 python -m ingestion.ingest_dpe    # ingestion des diagnostics énergétiques (DPE), incrémentale
 cd transform
-dbt build                         # transformations silver + tests de qualité
+dbt build                         # transformations silver et gold + 43 tests de qualité
+dbt docs generate; dbt docs serve # documentation et graphe de lignage des données
 ```
 
 ---
