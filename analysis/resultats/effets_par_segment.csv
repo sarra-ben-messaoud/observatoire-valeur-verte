@@ -1,0 +1,13 @@
+segment,controles,n,effet_pct,ic_bas_pct,ic_haut_pct
+Tous logements,commune et trimestre,30217,-20.495,-22.663,-18.266
+Tous logements,+ période de construction,30217,-10.180,-11.688,-8.647
+Appartements,commune et trimestre,23047,-23.421,-26.541,-20.168
+Appartements,+ période de construction,23047,-13.489,-14.938,-12.014
+Maisons,commune et trimestre,7170,-14.279,-16.852,-11.627
+Maisons,+ période de construction,7170,-9.038,-11.614,-6.387
+Lyon,commune et trimestre,10949,-16.572,-19.149,-13.912
+Lyon,+ période de construction,10949,-11.585,-13.133,-10.009
+Reste du Rhône,commune et trimestre,19268,-22.999,-24.776,-21.180
+Reste du Rhône,+ période de construction,19268,-10.333,-12.384,-8.235
+"Appartements, reste du Rhône",commune et trimestre,12282,-29.181,-31.338,-26.957
+"Appartements, reste du Rhône",+ période de construction,12282,-15.427,-17.602,-13.193

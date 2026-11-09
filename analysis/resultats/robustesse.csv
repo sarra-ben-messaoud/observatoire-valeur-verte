@@ -1,0 +1,6 @@
+variante,n,effet_pct,ic_bas_pct,ic_haut_pct
+Modèle principal,30217,-20.495,-22.663,-18.266
+Sans les DPE générés à partir d'un DPE d'immeuble,30158,-20.604,-22.746,-18.402
+Rapprochement strict (surface à ±5 %),25650,-20.370,-22.848,-17.813
+DPE de moins d'un an avant la vente,24325,-20.828,-23.132,-18.455
+Hors 1 % des prix extrêmes,29611,-19.161,-21.142,-17.130

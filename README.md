@@ -6,6 +6,9 @@ Pipeline de données de bout en bout sur les ventes immobilières (DVF) et les d
 énergétique (ADEME) : ingestion, lakehouse bronze / silver / gold, transformations et tests avec dbt,
 orchestration avec Airflow, dashboard Power BI et analyse statistique.
 
+**Résultat principal : à commune, période, type et surface égaux, une passoire thermique (F-G) se vend
+20 % moins cher au m² qu'un logement classé C** (intervalle de confiance à 95 % : −23 % à −18 %).
+
 > 🚧 Projet en cours de construction. Périmètre de la version 1 : le Rhône, ventes 2022-2025.
 
 - Cadrage complet (besoin, sources, architecture, plan) : [`docs/cadrage.md`](docs/cadrage.md)
@@ -20,7 +23,7 @@ orchestration avec Airflow, dashboard Power BI et analyse statistique.
 | 4. Gold et tests de qualité | ✅ |
 | 5. Orchestration (Airflow) et CI (GitHub Actions) | ⏳ |
 | 6. Dashboard Power BI | ✅ |
-| 7. Analyse de la valeur verte | ⏳ |
+| 7. Analyse de la valeur verte | ✅ |
 | 8. Passage à l'échelle (France entière) | ⏳ |
 
 ## Premiers résultats (Rhône, 2022-2025)
@@ -66,10 +69,34 @@ la base des DPE « nouvelle méthode » (depuis juillet 2021) se remplit.
 
 > Écarts **bruts** : ils ne tiennent pas compte de la surface, du type de logement ni de la localisation.
 > Exemple d'effet de composition : à Meyzieu, la décote est positive (+5,2 %) parce que 90 % des passoires vendues
-> sont des maisons, contre 31 % des logements A-C. L'étape 7 mesurera l'effet propre du DPE.
+> sont des maisons, contre 31 % des logements A-C. L'analyse ci-dessous mesure l'effet propre du DPE.
 
 Fichier : [`powerbi/observatoire_valeur_verte.pbix`](powerbi/observatoire_valeur_verte.pbix) · guide de construction :
 [`docs/dashboard.md`](docs/dashboard.md)
+
+## Analyse : la valeur verte « toutes choses égales par ailleurs »
+
+Régression hédonique sur 30 217 ventes : logarithme du prix au m² expliqué par la classe DPE, le type de logement,
+la surface, la commune et le trimestre de vente, avec erreurs standard regroupées par commune (Python, statsmodels).
+
+![Effets par classe DPE](analysis/resultats/effets_dpe.png)
+
+| Résultat (F-G vs C) | Écart de prix au m² |
+| --- | --- |
+| Écart brut | −18,1 % |
+| **À commune, période, type et surface égaux** | **−20,5 %** [−22,7 ; −18,3] |
+| … et à époque de construction égale | −10,2 % [−11,7 ; −8,6] |
+| Appartements / maisons | −23,4 % / −14,3 % |
+| 2022 → 2025 | −19,1 % → −22,8 % (seul 2025 diffère significativement) |
+
+- **La localisation masquait une partie de la décote** : beaucoup de passoires sont dans le centre de Lyon, où les prix sont élevés.
+- **L'effet propre du DPE se situe vraisemblablement entre −10 % et −20 %** : l'époque de construction influence le prix
+  pour d'autres raisons que l'énergie, mais elle est aussi la cause principale d'une mauvaise étiquette.
+- **Robuste** aux règles de rapprochement et aux prix extrêmes (de −19,2 % à −20,8 % selon les variantes).
+- **Cohérent avec les notaires** : exprimée par rapport à la classe D, comme dans leurs études, la décote est de −7 % à −10 %.
+
+Note complète (méthode, segments, robustesse, limites) : [`docs/analyse.md`](docs/analyse.md) ·
+code : [`analysis/valeur_verte.py`](analysis/valeur_verte.py)
 
 ## Modèle de données (couche gold)
 
@@ -102,6 +129,8 @@ python -m ingestion.ingest_dpe    # ingestion des diagnostics énergétiques (DP
 cd transform
 dbt build                         # transformations silver et gold + 43 tests de qualité
 dbt docs generate; dbt docs serve # documentation et graphe de lignage des données
+cd ..
+python analysis/valeur_verte.py  # analyse statistique (régressions, graphique)
 ```
 
 ---
