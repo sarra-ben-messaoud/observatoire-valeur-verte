@@ -94,24 +94,58 @@ Couleurs des courbes : A-C `#55AB26`, D-E `#E0A800`, F-G `#E2001A`. Carte « Dé
 
 ### Page 2 — Territoires
 
-| Visuel | Contenu |
-| --- | --- |
-| Carte (Azure Maps ou carte classique) | Latitude / longitude de `fait_ventes`, couleur = `etiquette_dpe`, filtre visuel `inclus_analyse = Vrai` |
-| Tableau | `dim_commune[libelle]`, Ventes analysées, Prix m² médian A-C, Prix m² médian F-G, Décote fiable — trié par Ventes analysées |
-| Histogramme groupé | Axe : `dim_commune[Zone]` · Légende : `fait_ventes[type_logement]` · Valeur : Décote F-G vs A-C |
+La page 1 est dupliquée (titre, segments synchronisés, cartes), puis on remplace les deux graphiques du bas.
 
-Message clé de la page : **la décote est plus de deux fois plus forte hors de Lyon pour les appartements** (−27,5 % contre −11,2 %).
+| Visuel | Champs | X | Largeur |
+| --- | --- | --- | --- |
+| Barres horizontales triées | Axe Y : `dim_commune[libelle]` · Axe X : `Décote fiable` · filtre : Décote fiable n'est pas vide · tri croissant · couleur fx dégradé rouge `E2001A` → jaune `FBBA00` | 30 | 700 |
+| Tableau | Commune, Ventes, Prix A-C, Prix F-G, Décote (mêmes 20 communes), sans ligne de total | 750 | 640 |
+| Barres groupées horizontales | Axe Y : `dim_commune[Zone]` · Légende : `type_logement` (bleu `3B6FB6`, gris `6B7280`) · Axe X : `Décote fiable` | 1410 | 480 |
+
+Tous à Y = 350, hauteur 650.
+
+**Pourquoi un classement plutôt qu'une carte :** sans fond de carte (Azure Maps exige un compte professionnel),
+une carte en bulles ne permet pas de reconnaître les communes, et les 20 communes fiables se chevauchent autour de
+Lyon. La question posée — « quelles communes ont la plus forte décote ? » — se lit mieux dans un classement.
+
+**Point d'attention : l'effet de composition.** À Meyzieu, la décote est positive (+5,2 %) parce que 90 % des
+passoires vendues y sont des maisons, contre 31 % des logements A-C : on compare des biens différents.
+C'est la raison d'être de l'analyse « toutes choses égales par ailleurs » (étape 7).
 
 ### Page 3 — Qualité des données
 
-| Visuel | Contenu |
-| --- | --- |
-| Entonnoir | Lignes DVF ingérées (354 101, texte) → Ventes totales → ventes rapprochées → Ventes analysées |
-| Courbes | Axe : `suivi_rapprochement[annee_vente]` · Valeur : moyenne pondérée du taux (ou mesure Taux de rapprochement) · Légende : type de logement |
-| Anneau | `fait_ventes[methode_rapprochement]` (clé BAN / adresse normalisée) |
-| Zone de texte | Méthode en 3 lignes : clé d'adresse exacte, contrôles surface ±10 % et date, exclusion des cas ambigus |
+Mesures supplémentaires :
 
-Cette page montre au recruteur que les chiffres sont **mesurés et contrôlés**, pas seulement affichés.
+```dax
+Ventes rapprochées = CALCULATE(COUNTROWS(fait_ventes), fait_ventes[est_rapprochee] = TRUE())
+Rapprochements fiables = CALCULATE(COUNTROWS(fait_ventes), fait_ventes[est_rapprochement_fiable] = TRUE())
+Part analysée = DIVIDE([Ventes analysées], [Ventes totales])
+Part clé exacte = DIVIDE(CALCULATE([Ventes rapprochées], fait_ventes[methode_rapprochement] = "cle_ban"), [Ventes rapprochées])
+Ventes par étape = SWITCH(SELECTEDVALUE('Étapes'[Ordre]), 1, [Ventes totales], 2, [Ventes rapprochées], 3, [Rapprochements fiables], 4, [Ventes analysées])
+```
+
+Table des étapes de l'entonnoir (Modélisation → Nouvelle table), triée par `Ordre` :
+
+```dax
+Étapes = DATATABLE("Étape", STRING, "Ordre", INTEGER, {
+    {"Ventes (1 logement)", 1}, {"Rapprochées", 2}, {"Rapprochement fiable", 3}, {"Analysées", 4}
+})
+```
+
+Colonne calculée dans `fait_ventes` (libellés lisibles) :
+
+```dax
+Méthode = SWITCH(fait_ventes[methode_rapprochement], "cle_ban", "Clé d'adresse exacte", "adresse_normalisee", "Adresse normalisée")
+```
+
+> Un nom de table accentué s'écrit entre apostrophes en DAX : `'Étapes'[Ordre]`.
+
+| Visuel | Champs |
+| --- | --- |
+| 4 cartes | Ventes totales · Taux de rapprochement · Part analysée · Part clé exacte |
+| Entonnoir | Catégorie : `Étapes[Étape]` · Valeurs : `Ventes par étape` |
+| Courbes | Axe X : `dim_temps[annee]` · Axe Y : `Taux de rapprochement` (0 à 100 %) · Légende : `type_logement` |
+| Anneau | Légende : `fait_ventes[Méthode]` · Valeurs : `Ventes rapprochées` |
 
 ## 6. Vérifier : les chiffres attendus
 
@@ -136,13 +170,34 @@ Avec filtres :
 | Maisons | −11,7 % (3 952 → 3 489) |
 | Appartements, Lyon | −11,2 % (5 032 → 4 470) |
 | Appartements, reste du Rhône | −27,5 % (3 819 → 2 769) |
+| Maisons, Lyon | −11,7 % (5 664 → 5 000) |
+| Maisons, reste du Rhône | −12,7 % (3 929 → 3 429) |
 | Année 2022 | −14,6 % |
 | Année 2025 | −17,7 % |
+
+Page 2, tableau des communes (les plus grosses) :
+
+| Commune | Ventes analysées | A-C | F-G | Décote |
+| --- | --- | --- | --- | --- |
+| Villeurbanne | 3 047 | 4 117 | 3 410 | −17,2 % |
+| Lyon 3e | 2 474 | 5 051 | 4 442 | −12,1 % |
+| Lyon 7e | 1 943 | 5 054 | 4 369 | −13,6 % |
+| Villefranche-sur-Saône | 906 | 2 921 | 2 112 | −27,7 % |
+| Meyzieu | 585 | 3 709 | 3 901 | +5,2 % |
+
+Page 3 :
+
+| Mesure | Valeur attendue |
+| --- | --- |
+| Entonnoir | 85 431 → 53 109 → 30 283 → 30 217 |
+| Taux de rapprochement, appartements | 57,4 % (2022) → 82,1 % (2025) |
+| Taux de rapprochement, maisons | 24,7 % (2022) → 40,4 % (2025) |
+| Part clé exacte | 97,1 % (51 567 sur 53 109) |
 
 Si un chiffre diffère, vérifier en priorité : les relations (sens du filtrage), le filtre `inclus_analyse`, et le tri de `etiquette_dpe`.
 
 ## 7. Publier dans le portfolio
 
 1. Enregistrer le rapport sous `powerbi/observatoire_valeur_verte.pbix`.
-2. Exporter chaque page en image (**Fichier → Exporter → PDF**, puis capture) et les ajouter dans `powerbi/`.
-3. Afficher la capture de la page 1 en haut du README.
+2. Faire une capture de chaque page (`powerbi/dashboard_page1.png`, `…page2.png`, `…page3.png`).
+3. Les captures s'affichent dans le README (section « Dashboard »).

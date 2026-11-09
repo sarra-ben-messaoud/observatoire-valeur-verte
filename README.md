@@ -19,7 +19,7 @@ orchestration avec Airflow, dashboard Power BI et analyse statistique.
 | 3. Silver et rapprochement DVF ↔ DPE | ✅ |
 | 4. Gold et tests de qualité | ✅ |
 | 5. Orchestration (Airflow) et CI (GitHub Actions) | ⏳ |
-| 6. Dashboard Power BI | ⏳ |
+| 6. Dashboard Power BI | ✅ |
 | 7. Analyse de la valeur verte | ⏳ |
 | 8. Passage à l'échelle (France entière) | ⏳ |
 
@@ -47,6 +47,29 @@ orchestration avec Airflow, dashboard Power BI et analyse statistique.
 
 Le taux de rapprochement progresse de 57 % (2022) à 82 % (2025) pour les appartements, à mesure que
 la base des DPE « nouvelle méthode » (depuis juillet 2021) se remplit.
+
+## Dashboard Power BI
+
+**Les passoires thermiques (F-G) se vendent 15,3 % moins cher au m² que les logements A-C, et l'écart se creuse :
+−14,6 % en 2022, −17,7 % en 2025.** Pour les appartements, la décote atteint −27,5 % hors de Lyon, contre −11,2 % dans Lyon.
+
+![Vue d'ensemble](powerbi/dashboard_page1.png)
+
+| Page | Contenu |
+| --- | --- |
+| Vue d'ensemble | Chiffres clés, prix médian par classe DPE, évolution 2022-2025 |
+| Territoires | Classement des 20 communes à décote fiable, comparaison Lyon / reste du Rhône |
+| Qualité des données | Entonnoir du pipeline, taux de rapprochement par année, méthodes de rapprochement |
+
+![Territoires](powerbi/dashboard_page2.png)
+![Qualité des données](powerbi/dashboard_page3.png)
+
+> Écarts **bruts** : ils ne tiennent pas compte de la surface, du type de logement ni de la localisation.
+> Exemple d'effet de composition : à Meyzieu, la décote est positive (+5,2 %) parce que 90 % des passoires vendues
+> sont des maisons, contre 31 % des logements A-C. L'étape 7 mesurera l'effet propre du DPE.
+
+Fichier : [`powerbi/observatoire_valeur_verte.pbix`](powerbi/observatoire_valeur_verte.pbix) · guide de construction :
+[`docs/dashboard.md`](docs/dashboard.md)
 
 ## Modèle de données (couche gold)
 

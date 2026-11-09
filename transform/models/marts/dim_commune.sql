@@ -7,6 +7,9 @@ select
          then 'Lyon ' || right(code_commune, 1) || case right(code_commune, 1) when '1' then 'er' else 'e' end
          else any_value(nom_commune) end                          as libelle,
     code_commune between '69381' and '69389'                       as est_lyon,
+    -- point représentatif de la commune (médiane des ventes) pour la carte en bulles de Power BI
+    round(median(latitude), 5)                                     as latitude,
+    round(median(longitude), 5)                                    as longitude,
     count(*)                                                       as nb_ventes_total
 from {{ ref('int_dvf__ventes_logement') }}
 group by code_commune
